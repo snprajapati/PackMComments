@@ -14,6 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+// For the sake of the demo removing the middleware from API layer.
+// Usually we use this to create authentication layer for the system
+/*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
-});
+});*/
+
+
+//Store Comment
+Route::post('comment',[CommentController::class,'store']);
+
+//Get Comments
+Route::get('comments',[CommentController::class,'index']);
