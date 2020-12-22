@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 
 
 //Store Comment
-Route::post('comment',[CommentController::class,'store']);
+Route::post('/comment',[CommentController::class,'store']);
 
 //Get Comments
-Route::get('comments',[CommentController::class,'index']);
+Route::get('/comments',[CommentController::class,'index']);

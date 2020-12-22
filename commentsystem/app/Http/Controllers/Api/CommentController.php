@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\ApiBaseController;
+use App\Models\Comment;
 use Illuminate\Http\Request;
+use Validator;
 
-class CommentController extends Controller
+class CommentController extends ApiBaseController
 {
     /**
      * Display a listing of the resource.
@@ -16,7 +19,7 @@ class CommentController extends Controller
         try {
             $comments = Comment::with('children')
             ->whereNull('parent_id')
-            ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->get();  
             
             $response['data'] = $comments;
@@ -34,7 +37,7 @@ class CommentController extends Controller
         }
     }
 
-     /**
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -43,11 +46,26 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         try {
+            
+            $validator = Validator::make($request->all(), [
+                // Do not allow any shady characters
+                'user' => 'required',
+                'content' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                $response['data'] = $validator->errors();
+                $response['status_code'] = 403;
+                $response['message'] = 'Bad Request!';
+
+                return $this->errorResponse($response, 500);
+            }
+               
             $comment = new Comment();
-            $comment->user = $request->user;
+            $comment->user = strip_tags($request->user);
             $comment->post_id = 1;
             $comment->parent_id = $request->parent_id ?? null;
-            $comment->content = $request->content;
+            $comment->content = strip_tags($request->content);
             $response = [];
 
             if($comment->save()) {
