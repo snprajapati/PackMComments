@@ -19,7 +19,7 @@ class CommentController extends ApiBaseController
         try {
             $comments = Comment::with('children')
             ->whereNull('parent_id')
-            ->orderByDesc('id')
+            ->orderByDesc('created_at')
             ->get();  
             
             $response['data'] = $comments;
@@ -48,7 +48,6 @@ class CommentController extends ApiBaseController
         try {
             
             $validator = Validator::make($request->all(), [
-                // Do not allow any shady characters
                 'user' => 'required',
                 'content' => 'required',
             ]);
